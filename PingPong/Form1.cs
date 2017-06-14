@@ -24,7 +24,7 @@ namespace PingPong
 
         private void PingPongWindow_Load(object sender, EventArgs e)
         {
-            Ball.Location = new Point(600, 200);
+            Ball.Location= new Point(600, 200);
             timer1.Interval = 10;
             timer1.Tick += new EventHandler(TimerTick);
             timer1.Start();
@@ -63,32 +63,38 @@ namespace PingPong
                 Ball.Left += 2;
             }
 
+            // border checks
+
+            // left border: game over
             if (Ball.Left == PlayField.Left + 4)
             {
                 timer1.Stop();
                 MessageBox.Show("You lost");
             }
+            // right border: bounce
             if (Ball.Right >= PlayField.Right - 3)
             {
                 BallMovingLeft = true;
             }
-            //send it to bottom
+
+            //top border: bounce
             if (Ball.Top == PlayField.Top + 4)
             {
                 BallMovingUp = false;
             }
-            // send it to top
+            // bottom border: bounce
             if (Ball.Bottom >= PlayField.Bottom - 3)
             {
                 BallMovingUp = true;
             }
-            // paddle contact
-            if (Ball.Left == Paddle.Right)
+            // paddle contact: bounce?
+            if (Paddle.Bounds.IntersectsWith(Ball.Bounds))
             {
-                BallMovingLeft = true;
+                BallMovingLeft = false;
             }
         }
 
+        // lagless paddle movement control
         private void PingPongWindow_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.W)
@@ -115,6 +121,7 @@ namespace PingPong
             }
         }
 
+        // drawing a border for the playfield
         private void PingPongWindow_Paint(object sender, PaintEventArgs e)
         {
             Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 5);
