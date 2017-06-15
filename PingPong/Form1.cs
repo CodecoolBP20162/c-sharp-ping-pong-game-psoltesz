@@ -19,6 +19,7 @@ namespace PingPong
         private bool BallMovingLeft;
         private int PlayerScore;
         private double BallSpeed;
+        private bool GameRunning;
 
         public PingPongWindow()
         {
@@ -27,20 +28,13 @@ namespace PingPong
 
         private void PingPongWindow_Load(object sender, EventArgs e)
         {
-            
-        }
-
-        private void StartGameButton_Click(object sender, EventArgs e)
-        {
-            StartGameButton.Visible = false;
             BallMovingLeft = true;
             PlayerScore = 0;
             BallSpeed = 2.0;
             ScoreLabel.Text = "Score: " + PlayerScore;
-
             timer1.Interval = 10;
             timer1.Tick += new EventHandler(TimerTick);
-            timer1.Start();
+            
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -51,7 +45,7 @@ namespace PingPong
                 Paddle.Top -= 10;
             }
 
-            if (PaddleMovingDown && PlayField.Bottom > (Paddle.Bottom + 1))
+            if (PaddleMovingDown && PlayField.Bottom > (Paddle.Bottom + 3))
             {
                 Paddle.Top += 10;
             }
@@ -79,24 +73,24 @@ namespace PingPong
             // border checks
 
             // left border: game over
-            if (Ball.Left == PlayField.Left + 4)
+            if (Ball.Left <= PlayField.Left)
             {
                 timer1.Stop();
                 MessageBox.Show("You lost.");
             }
             // right border: bounce
-            if (Ball.Right >= PlayField.Right - 3)
+            if (Ball.Right >= PlayField.Right)
             {
                 BallMovingLeft = true;
             }
 
             //top border: bounce
-            if (Ball.Top <= PlayField.Top + 4)
+            if (Ball.Top <= PlayField.Top)
             {
                 BallMovingUp = false;
             }
             // bottom border: bounce
-            if (Ball.Bottom >= PlayField.Bottom - 3)
+            if (Ball.Bottom >= PlayField.Bottom)
             {
                 BallMovingUp = true;
             }
@@ -140,8 +134,22 @@ namespace PingPong
 
             if (e.KeyCode == Keys.Escape)
             {
-                Application.Exit();
+                timer1.Stop();
                 MessageBox.Show("Final score: " + PlayerScore);
+                Application.Exit();
+            }
+
+            if (e.KeyCode == Keys.Space && GameRunning)
+            {
+                GameRunning = false;
+                timer1.Stop();
+                MessageBox.Show("Paused");
+            }
+
+            if (e.KeyCode == Keys.Space && !GameRunning)
+            {
+                GameRunning = true;
+                timer1.Start();
             }
         }
 
@@ -150,6 +158,39 @@ namespace PingPong
         {
             Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 5);
             e.Graphics.DrawRectangle(blackPen, PlayField.Location.X, PlayField.Location.Y, PlayField.Size.Width, PlayField.Size.Height);
+        }
+
+        private void TwoPlayersButton_Click(object sender, EventArgs e)
+        {
+            HideButtons();
+            Ball.Visible = true;
+            Paddle.Visible = true;
+            Paddle2.Visible = true;
+
+            GameRunning = true;
+            timer1.Start();
+        }
+
+        private void SinglePlayerButton_Click(object sender, EventArgs e)
+        {
+            HideButtons();
+            Ball.Visible = true;
+            Paddle.Visible = true;
+
+            GameRunning = true;
+            timer1.Start();
+        }
+
+        private void HideButtons()
+        {
+            SinglePlayerButton.Visible = false;
+            TwoPlayersButton.Visible = false;
+        }
+
+        private void PingPongWindow_SizeChanged(object sender, EventArgs e)
+        {
+            Invalidate();
+            Update();
         }
     }
 }
