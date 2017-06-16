@@ -13,123 +13,59 @@ namespace PingPong
 {
     public partial class PingPongWindow : Form
     {
-        private bool PaddleMovingUp;
-        private bool PaddleMovingDown;
-        private bool BallMovingUp;
-        private bool BallMovingLeft;
         private int PlayerScore;
-        private double BallSpeed;
         private bool GameRunning;
+        private Ball theBall;
+        private Paddle player1Paddle;
+        private Paddle player2Paddle;
+        private PaddleVsBall paddleVsBall;
 
         public PingPongWindow()
         {
             InitializeComponent();
+            theBall = new Ball(Ball, PlayField.Bounds);
+            theBall.velocity.X = 3;
+            theBall.velocity.Y = 3;
+            player1Paddle = new Paddle(Paddle, PlayField.Bounds, Keys.W, Keys.S);
+            player2Paddle = new Paddle(Paddle2, PlayField.Bounds, Keys.O, Keys.L);
+            paddleVsBall = new PaddleVsBall();
+
         }
 
         private void PingPongWindow_Load(object sender, EventArgs e)
         {
-            BallMovingLeft = true;
             PlayerScore = 0;
-            BallSpeed = 2.0;
             ScoreLabel.Text = "Score: " + PlayerScore;
-            timer1.Interval = 10;
+            timer1.Interval = 13;
             timer1.Tick += new EventHandler(TimerTick);
-            
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
-            // paddle movement
-            if (PaddleMovingUp && PlayField.Top < (Paddle.Top - 4))
-            {
-                Paddle.Top -= 10;
-            }
-
-            if (PaddleMovingDown && PlayField.Bottom > (Paddle.Bottom + 3))
-            {
-                Paddle.Top += 10;
-            }
-
-            // vertical movement
-            if (BallMovingUp)
-            {
-                Ball.Top -= (int)BallSpeed;
-            }
-            if (!BallMovingUp)
-            {
-                Ball.Top += (int)BallSpeed;
-            }
-
-            // horizontal movement
-            if (BallMovingLeft)
-            {
-                Ball.Left -= (int)BallSpeed;
-            }
-            if (!BallMovingLeft)
-            {
-                Ball.Left += (int)BallSpeed;
-            }
-
-            // border checks
-
-            // left border: game over
-            if (Ball.Left <= PlayField.Left)
-            {
-                timer1.Stop();
-                MessageBox.Show("You lost.");
-            }
-            // right border: bounce
-            if (Ball.Right >= PlayField.Right)
-            {
-                BallMovingLeft = true;
-            }
-
-            //top border: bounce
-            if (Ball.Top <= PlayField.Top)
-            {
-                BallMovingUp = false;
-            }
-            // bottom border: bounce
-            if (Ball.Bottom >= PlayField.Bottom)
-            {
-                BallMovingUp = true;
-            }
-            // paddle contact: bounce
-            if (Paddle.Bounds.IntersectsWith(Ball.Bounds))
-            {
-                BallMovingLeft = false;
-                PlayerScore += 100;
-            }
+            theBall.touchingPaddle = paddleVsBall.CheckCollision(player1Paddle.basicObject.Bounds, theBall.basicObject.Bounds);
+            theBall.Move();
+            player1Paddle.Move();
+            player2Paddle.Move();
+            
             // updating score
             ScoreLabel.Text = "Score: " + PlayerScore;
-            //increasing speed
-            BallSpeed += 0.00001;
         }
 
         // lagless paddle movement control
         private void PingPongWindow_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.W)
+            if (player1Paddle.KeyReleased(e.KeyCode) || player2Paddle.KeyReleased(e.KeyCode))
             {
-                PaddleMovingUp = false;
-            }
-
-            if (e.KeyCode == Keys.S)
-            {
-                PaddleMovingDown = false;
+                return;
             }
         }
-
+        
+        // rest of movement and extra KeyEvents
         private void PingPongWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.W)
+            if (player1Paddle.KeyPressed(e.KeyCode) || player2Paddle.KeyPressed(e.KeyCode))
             {
-                PaddleMovingUp = true;
-            }
-
-            if (e.KeyCode == Keys.S)
-            {
-                PaddleMovingDown = true;
+                return;
             }
 
             if (e.KeyCode == Keys.Escape)
@@ -153,13 +89,19 @@ namespace PingPong
             }
         }
 
-        // drawing a border for the playfield
-        private void PingPongWindow_Paint(object sender, PaintEventArgs e)
+        // single player mode
+        private void SinglePlayerButton_Click(object sender, EventArgs e)
         {
-            Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 5);
-            e.Graphics.DrawRectangle(blackPen, PlayField.Location.X, PlayField.Location.Y, PlayField.Size.Width, PlayField.Size.Height);
+            HideButtons();
+            Ball.Visible = true;
+            Paddle.Visible = true;
+            Paddle2.SetBounds(1, 1, 1, 1);
+
+            GameRunning = true;
+            timer1.Start();
         }
 
+        // 2 players mode
         private void TwoPlayersButton_Click(object sender, EventArgs e)
         {
             HideButtons();
@@ -171,26 +113,31 @@ namespace PingPong
             timer1.Start();
         }
 
-        private void SinglePlayerButton_Click(object sender, EventArgs e)
-        {
-            HideButtons();
-            Ball.Visible = true;
-            Paddle.Visible = true;
-
-            GameRunning = true;
-            timer1.Start();
-        }
-
+        // method to hide buttons
         private void HideButtons()
         {
             SinglePlayerButton.Visible = false;
             TwoPlayersButton.Visible = false;
         }
 
+        // scalability
         private void PingPongWindow_SizeChanged(object sender, EventArgs e)
         {
+            if (theBall != null)
+            {
+                player1Paddle.boundaries = PlayField.Bounds;
+                player2Paddle.boundaries = PlayField.Bounds;
+                theBall.boundaries = PlayField.Bounds;
+            }
             Invalidate();
             Update();
+        }
+
+        // drawing a border for the playfield
+        private void PingPongWindow_Paint(object sender, PaintEventArgs e)
+        {
+            Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 5);
+            e.Graphics.DrawRectangle(blackPen, PlayField.Location.X, PlayField.Location.Y, PlayField.Size.Width, PlayField.Size.Height);
         }
     }
 }
