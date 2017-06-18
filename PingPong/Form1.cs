@@ -1,24 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PingPong
 {
     public partial class PingPongWindow : Form
     {
-        private int PlayerScore;
-        private bool GameRunning;
+        private bool gameRunning;
+        private bool gameOver;
         private Ball theBall;
+        private List<Paddle> players;
         private Paddle player1Paddle;
         private Paddle player2Paddle;
-        private PaddleVsBall paddleVsBall;
 
         public PingPongWindow()
         {
@@ -26,35 +20,68 @@ namespace PingPong
             theBall = new Ball(Ball, PlayField.Bounds);
             theBall.velocity.X = 3;
             theBall.velocity.Y = 3;
-            player1Paddle = new Paddle(Paddle, PlayField.Bounds, Keys.W, Keys.S);
-            player2Paddle = new Paddle(Paddle2, PlayField.Bounds, Keys.O, Keys.L);
-            paddleVsBall = new PaddleVsBall();
+            players = new List<Paddle>();
 
         }
 
         private void PingPongWindow_Load(object sender, EventArgs e)
         {
-            PlayerScore = 0;
-            ScoreLabel.Text = "Score: " + PlayerScore;
-            timer1.Interval = 13;
-            timer1.Tick += new EventHandler(TimerTick);
+            mainTimer.Interval = 13;
+            player1Paddle = new Paddle(Paddle, PlayField.Bounds, Keys.W, Keys.S, "Player 1", 1);
+            players.Add(player1Paddle);
         }
 
-        private void TimerTick(object sender, EventArgs e)
+        private void SingleplayerTick(object sender, EventArgs e)
         {
-            theBall.touchingPaddle = paddleVsBall.CheckCollision(player1Paddle.basicObject.Bounds, theBall.basicObject.Bounds);
+            // collision and score check
+            Collision.CheckCollision(player1Paddle, theBall);
+            // adding scores
+            player1Paddle.AddScore();
+            gameOver = player1Paddle.CheckForVictory();
+            gameOver = theBall.CheckForVictory();
+            // movement
+            theBall.Move();
+            player1Paddle.Move();
+            // updating score
+            ScoreLabel1.Text = "Score: " + player1Paddle.Score;
+            CheckIfGameIsOver(player1Paddle);
+        }
+
+        private void TwoPlayersTick(object sender, EventArgs e)
+        {
+            // collision and score check
+            if (!Collision.CheckCollision(player1Paddle, theBall))
+            {
+                Collision.CheckCollision(player2Paddle, theBall);
+            }
+            // adding scores
+            player1Paddle.AddScore();
+            gameOver = player1Paddle.CheckForVictory();
+            player2Paddle.AddScore();
+            gameOver = player2Paddle.CheckForVictory();
+            theBall.CheckForVictory();
+            // movement
             theBall.Move();
             player1Paddle.Move();
             player2Paddle.Move();
-            
             // updating score
-            ScoreLabel.Text = "Score: " + PlayerScore;
+            ScoreLabel1.Text = "Score: " + player1Paddle.Score;
+            ScoreLabel2.Text = "Score: " + player2Paddle.Score;
+            CheckIfGameIsOver(player1Paddle);
+            CheckIfGameIsOver(player2Paddle);
         }
 
         // lagless paddle movement control
         private void PingPongWindow_KeyUp(object sender, KeyEventArgs e)
         {
-            if (player1Paddle.KeyReleased(e.KeyCode) || player2Paddle.KeyReleased(e.KeyCode))
+            if (players.Count == 2)
+            {
+                if (player1Paddle.KeyReleased(e.KeyCode) || player2Paddle.KeyReleased(e.KeyCode))
+                {
+                    return;
+                }
+            }
+            if (player1Paddle.KeyReleased(e.KeyCode))
             {
                 return;
             }
@@ -63,61 +90,90 @@ namespace PingPong
         // rest of movement and extra KeyEvents
         private void PingPongWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (player1Paddle.KeyPressed(e.KeyCode) || player2Paddle.KeyPressed(e.KeyCode))
+            if (players.Count == 2)
+            {
+                if (player1Paddle.KeyPressed(e.KeyCode) || player2Paddle.KeyPressed(e.KeyCode))
+                {
+                    return;
+                }
+            }
+
+            if (player1Paddle.KeyPressed(e.KeyCode))
             {
                 return;
             }
 
+
             if (e.KeyCode == Keys.Escape)
             {
-                timer1.Stop();
-                MessageBox.Show("Final score: " + PlayerScore);
+                mainTimer.Stop();
                 Application.Exit();
             }
 
-            if (e.KeyCode == Keys.Space && GameRunning)
+            if (e.KeyCode == Keys.Space && gameRunning)
             {
-                GameRunning = false;
-                timer1.Stop();
+                gameRunning = false;
+                mainTimer.Stop();
                 MessageBox.Show("Paused");
             }
 
-            if (e.KeyCode == Keys.Space && !GameRunning)
+            if (e.KeyCode == Keys.Space && !gameRunning)
             {
-                GameRunning = true;
-                timer1.Start();
+                gameRunning = true;
+                mainTimer.Start();
             }
         }
 
         // single player mode
         private void SinglePlayerButton_Click(object sender, EventArgs e)
         {
+            mainTimer.Tick += new EventHandler(SingleplayerTick);
             HideButtons();
             Ball.Visible = true;
             Paddle.Visible = true;
             Paddle2.SetBounds(1, 1, 1, 1);
+            Paddle2.Enabled = false;
+            ScoreLabel1.Text = "Score: " + player1Paddle.Score;
 
-            GameRunning = true;
-            timer1.Start();
+            gameRunning = true;
+            mainTimer.Start();
         }
 
         // 2 players mode
         private void TwoPlayersButton_Click(object sender, EventArgs e)
         {
+            mainTimer.Tick += new EventHandler(TwoPlayersTick);
             HideButtons();
             Ball.Visible = true;
             Paddle.Visible = true;
             Paddle2.Visible = true;
+            player2Paddle = new Paddle(Paddle2, PlayField.Bounds, Keys.O, Keys.L, "Player 2", 2);
+            players.Add(player2Paddle);
+            ScoreLabel1.Text = "Score: " + player1Paddle.Score;
+            ScoreLabel2.Text = "Score: " + player2Paddle.Score;
 
-            GameRunning = true;
-            timer1.Start();
+            gameRunning = true;
+            mainTimer.Start();
         }
 
-        // method to hide buttons
         private void HideButtons()
         {
             SinglePlayerButton.Visible = false;
             TwoPlayersButton.Visible = false;
+        }
+
+        // game over check
+        private void CheckIfGameIsOver(Paddle paddle)
+        {
+            if (gameOver)
+            {
+                mainTimer.Stop();
+                theBall.basicObject.Visible = false;
+                paddle.basicObject.Visible = false;
+                GameOverLabel.Visible = true;
+                MessageBox.Show(paddle.playerName + " wins!");
+                Application.Exit();
+            }
         }
 
         // scalability
@@ -125,12 +181,13 @@ namespace PingPong
         {
             if (theBall != null)
             {
-                player1Paddle.boundaries = PlayField.Bounds;
-                player2Paddle.boundaries = PlayField.Bounds;
+                foreach (Paddle player in players)
+                {
+                    player.boundaries = PlayField.Bounds;
+                }
                 theBall.boundaries = PlayField.Bounds;
             }
             Invalidate();
-            Update();
         }
 
         // drawing a border for the playfield

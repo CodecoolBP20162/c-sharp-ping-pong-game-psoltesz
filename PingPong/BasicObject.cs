@@ -23,13 +23,12 @@ namespace PingPong
 
         public void Move()
         {
-            Point temp = new Point(basicObject.Location.X + velocity.X, basicObject.Location.Y + velocity.Y);
-            basicObject.Location = temp;
-            // might cause visual bugs; will check back if it causes problems
+            basicObject.Location = new Point(basicObject.Location.X + velocity.X, basicObject.Location.Y + velocity.Y);
             ChangeVelocity();
         }
 
         // abstract method since the ball and the paddles require different handling
         abstract protected void ChangeVelocity();
+        abstract public bool CheckForVictory();
     }
 }

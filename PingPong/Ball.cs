@@ -10,17 +10,27 @@ namespace PingPong
 {
     class Ball : BasicObject
     {
-        public bool touchingPaddle;
+        private bool gameOver;
 
-        public Ball(PictureBox basicObject, Rectangle boundaries) : base(basicObject, boundaries)
-        {
-        }
+        public enum collidedWithPaddle { leftPaddle, rightPaddle, invalid };
+
+        public collidedWithPaddle paddleHit;
+
+        public Ball(PictureBox basicObject, Rectangle boundaries) : base(basicObject, boundaries) { paddleHit = collidedWithPaddle.invalid; }
 
         override protected void ChangeVelocity()
         {
-            if (basicObject.Left <= boundaries.Left || basicObject.Right >= boundaries.Right)
+            if (basicObject.Left <= boundaries.Left)
             {
                 velocity.X = -velocity.X;
+                // game over in singleplayer and multiplayer
+                gameOver = true;
+            }
+
+            if (basicObject.Right >= boundaries.Right)
+            {
+                velocity.X = -velocity.X;
+                // game over in multiplayer
             }
 
             if (basicObject.Top <= boundaries.Top || basicObject.Bottom >= boundaries.Bottom)
@@ -28,12 +38,28 @@ namespace PingPong
                 velocity.Y = -velocity.Y;
             }
 
-            if (touchingPaddle)
+            if (paddleHit == collidedWithPaddle.leftPaddle)
             {
                 velocity.X = -velocity.X;
-                Point newLocation = new Point(basicObject.Location.X + 6, basicObject.Location.Y);
-                basicObject.Location = newLocation;
+                basicObject.Location = new Point(basicObject.Location.X + 6, basicObject.Location.Y);
+                paddleHit = collidedWithPaddle.invalid;
             }
+
+            if (paddleHit == collidedWithPaddle.rightPaddle)
+            {
+                velocity.X = -velocity.X;
+                basicObject.Location = new Point(basicObject.Location.X - 6, basicObject.Location.Y);
+                paddleHit = collidedWithPaddle.invalid;
+            }
+        }
+
+        override public bool CheckForVictory()
+        {
+            if (gameOver)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

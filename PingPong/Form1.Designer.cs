@@ -29,29 +29,31 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.ScoreLabel = new System.Windows.Forms.Label();
+            this.mainTimer = new System.Windows.Forms.Timer(this.components);
+            this.ScoreLabel1 = new System.Windows.Forms.Label();
             this.SinglePlayerButton = new System.Windows.Forms.Button();
             this.TwoPlayersButton = new System.Windows.Forms.Button();
             this.Ball = new System.Windows.Forms.PictureBox();
             this.Paddle2 = new System.Windows.Forms.PictureBox();
             this.Paddle = new System.Windows.Forms.PictureBox();
             this.PlayField = new System.Windows.Forms.PictureBox();
+            this.GameOverLabel = new System.Windows.Forms.Label();
+            this.ScoreLabel2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Ball)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Paddle2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Paddle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PlayField)).BeginInit();
             this.SuspendLayout();
             // 
-            // ScoreLabel
+            // ScoreLabel1
             // 
-            this.ScoreLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.ScoreLabel.AutoSize = true;
-            this.ScoreLabel.Location = new System.Drawing.Point(531, 521);
-            this.ScoreLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.ScoreLabel.Name = "ScoreLabel";
-            this.ScoreLabel.Size = new System.Drawing.Size(0, 17);
-            this.ScoreLabel.TabIndex = 4;
+            this.ScoreLabel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.ScoreLabel1.AutoSize = true;
+            this.ScoreLabel1.Location = new System.Drawing.Point(276, 519);
+            this.ScoreLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ScoreLabel1.Name = "ScoreLabel1";
+            this.ScoreLabel1.Size = new System.Drawing.Size(0, 17);
+            this.ScoreLabel1.TabIndex = 4;
             // 
             // SinglePlayerButton
             // 
@@ -132,17 +134,40 @@
             this.PlayField.TabStop = false;
             this.PlayField.Visible = false;
             // 
+            // GameOverLabel
+            // 
+            this.GameOverLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.GameOverLabel.AutoSize = true;
+            this.GameOverLabel.Font = new System.Drawing.Font("Courier New", 31.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GameOverLabel.Location = new System.Drawing.Point(426, 240);
+            this.GameOverLabel.Name = "GameOverLabel";
+            this.GameOverLabel.Size = new System.Drawing.Size(313, 60);
+            this.GameOverLabel.TabIndex = 10;
+            this.GameOverLabel.Text = "GAME OVER";
+            this.GameOverLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.GameOverLabel.Visible = false;
+            // 
+            // ScoreLabel2
+            // 
+            this.ScoreLabel2.AutoSize = true;
+            this.ScoreLabel2.Location = new System.Drawing.Point(836, 519);
+            this.ScoreLabel2.Name = "ScoreLabel2";
+            this.ScoreLabel2.Size = new System.Drawing.Size(0, 17);
+            this.ScoreLabel2.TabIndex = 11;
+            // 
             // PingPongWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(1238, 567);
+            this.Controls.Add(this.ScoreLabel2);
+            this.Controls.Add(this.GameOverLabel);
             this.Controls.Add(this.Ball);
             this.Controls.Add(this.Paddle2);
             this.Controls.Add(this.TwoPlayersButton);
             this.Controls.Add(this.SinglePlayerButton);
-            this.Controls.Add(this.ScoreLabel);
+            this.Controls.Add(this.ScoreLabel1);
             this.Controls.Add(this.Paddle);
             this.Controls.Add(this.PlayField);
             this.DoubleBuffered = true;
@@ -167,13 +192,15 @@
         #endregion
 
         protected System.Windows.Forms.PictureBox Paddle;
-        protected System.Windows.Forms.Timer timer1;
+        protected System.Windows.Forms.Timer mainTimer;
         protected System.Windows.Forms.PictureBox PlayField;
         protected System.Windows.Forms.PictureBox Ball;
-        protected System.Windows.Forms.Label ScoreLabel;
+        protected System.Windows.Forms.Label ScoreLabel1;
         protected System.Windows.Forms.Button SinglePlayerButton;
         protected System.Windows.Forms.Button TwoPlayersButton;
         protected System.Windows.Forms.PictureBox Paddle2;
+        private System.Windows.Forms.Label GameOverLabel;
+        private System.Windows.Forms.Label ScoreLabel2;
     }
 }
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace PingPong
@@ -13,14 +8,26 @@ namespace PingPong
         Keys upKey;
         Keys downKey;
         enum collisionLocation { atBot, atTop, invalid };
+        public string playerName;
+        public int ID;
+        private int score = 0;
+        public bool scored;
 
         collisionLocation collisionDetection;
 
-        public Paddle(PictureBox basicObject, Rectangle boundaries, Keys upKey, Keys downKey) : base(basicObject, boundaries)
+        public Paddle(PictureBox basicObject, Rectangle boundaries, Keys upKey, Keys downKey, string playerName, int ID) : base(basicObject, boundaries)
         {
             this.upKey = upKey;
             this.downKey = downKey;
+            this.playerName = playerName;
+            this.ID = ID;
             collisionDetection = collisionLocation.invalid;
+        }
+
+        public int Score
+        {
+            get { return score; }
+            set { score = value; }
         }
 
         public bool KeyPressed(Keys key)
@@ -43,6 +50,21 @@ namespace PingPong
             if (key == upKey || key == downKey)
             {
                 velocity.Y = 0;
+                return true;
+            }
+            return false;
+        }
+
+        public void AddScore()
+        {
+            if (scored) { Score += 100; }
+            scored = false;
+        }
+
+        override public bool CheckForVictory()
+        {
+            if (score == 1000)
+            {
                 return true;
             }
             return false;
