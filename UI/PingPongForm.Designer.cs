@@ -1,4 +1,4 @@
-﻿namespace PingPong
+﻿namespace PingPongSolution
 {
     partial class PingPongWindow
     {
@@ -85,7 +85,7 @@
             // 
             this.Ball.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.Ball.BackColor = System.Drawing.Color.Transparent;
-            this.Ball.Image = global::PingPong.Properties.Resources.Cute_Ball_Games_icon;
+            this.Ball.Image = global::PingPongSolution.Properties.Resources.Cute_Ball_Games_icon;
             this.Ball.Location = new System.Drawing.Point(895, 234);
             this.Ball.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Ball.Name = "Ball";
@@ -98,7 +98,7 @@
             // Paddle2
             // 
             this.Paddle2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.Paddle2.Image = global::PingPong.Properties.Resources.rectvert;
+            this.Paddle2.Image = global::PingPongSolution.Properties.Resources.rectvert;
             this.Paddle2.Location = new System.Drawing.Point(839, 181);
             this.Paddle2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Paddle2.Name = "Paddle2";
@@ -111,7 +111,7 @@
             // Paddle
             // 
             this.Paddle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.Paddle.Image = global::PingPong.Properties.Resources.rectvert;
+            this.Paddle.Image = global::PingPongSolution.Properties.Resources.rectvert;
             this.Paddle.Location = new System.Drawing.Point(307, 181);
             this.Paddle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Paddle.Name = "Paddle";

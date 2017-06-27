@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace PingPong
+namespace PingPongSolution
 {
-    class Ball : BasicObject
+    public class Ball : BasicObject
     {
         private bool gameOver;
 

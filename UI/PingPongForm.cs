@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace PingPong
+namespace PingPongSolution
 {
     public partial class PingPongWindow : Form
     {
@@ -21,7 +21,6 @@ namespace PingPong
             theBall.velocity.X = 3;
             theBall.velocity.Y = 3;
             players = new List<Paddle>();
-
         }
 
         private void PingPongWindow_Load(object sender, EventArgs e)
@@ -133,8 +132,7 @@ namespace PingPong
             Paddle.Visible = true;
             Paddle2.SetBounds(1, 1, 1, 1);
             Paddle2.Enabled = false;
-            ScoreLabel1.Text = "Score: " + player1Paddle.Score;
-
+            
             gameRunning = true;
             mainTimer.Start();
         }
@@ -149,8 +147,6 @@ namespace PingPong
             Paddle2.Visible = true;
             player2Paddle = new Paddle(Paddle2, PlayField.Bounds, Keys.O, Keys.L, "Player 2", 2);
             players.Add(player2Paddle);
-            ScoreLabel1.Text = "Score: " + player1Paddle.Score;
-            ScoreLabel2.Text = "Score: " + player2Paddle.Score;
 
             gameRunning = true;
             mainTimer.Start();

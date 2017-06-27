@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace PingPong
+namespace PingPongSolution
 {
-    class Paddle : BasicObject
+    public class Paddle : BasicObject
     {
         Keys upKey;
         Keys downKey;
